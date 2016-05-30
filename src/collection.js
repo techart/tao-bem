@@ -1,5 +1,5 @@
 import $ from "jquery";
-import ObjectsCollection from "tao-core/objects/collection";
+import ObjectsCollection from "tao-core/lib/objects/collection";
 
 class Collection extends ObjectsCollection
 {
