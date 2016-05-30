@@ -4,6 +4,7 @@
   "description": "Frontend TAO/BEM",
   "author": "web@techart.ru",
   "license": "ISC",
+  "main": "tao-bem.js",
   "dependencies": {
     "jquery": "^2.2.1",
     "events": "^1.1.0",
