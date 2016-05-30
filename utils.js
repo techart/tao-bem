@@ -1,4 +1,4 @@
-import Config from "component/bem/config";
+import Config from "./config";
 
 class Utils
 {

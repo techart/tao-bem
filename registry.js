@@ -1,6 +1,6 @@
 import $ from "jquery";
-import Utils from "component/bem/utils";
-import Config from "component/bem/config";
+import Utils from "./utils";
+import Config from "./config";
 
 class Registry
 {

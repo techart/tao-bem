@@ -1,8 +1,8 @@
 import $ from "jquery";
-import Config from "component/bem/config";
-import Registry from "component/bem/registry";
-import Utils from "component/bem/utils";
-import Collection from "component/bem/collection";
+import Config from "./config";
+import Registry from "./registry";
+import Utils from "./utils";
+import Collection from "./collection";
 import EventEmitter from "events";
 
 class Block extends EventEmitter
