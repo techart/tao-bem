@@ -5,7 +5,7 @@
   "author": "web@techart.ru",
   "license": "ISC",
   "scripts": {
-    "compile": "babel --presets es2015,stage-0 -d lib/ src/",
+    "compile": "../.bin/babel --presets es2015,stage-0 -d lib/ src/",
     "postinstall": "npm run compile"
   },
   "dependencies": {
