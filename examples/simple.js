@@ -1,5 +1,5 @@
 import $ from "jquery";
-import BEM from "component/bem";
+import BEM from "tao-bem";
 
 class TestBlock extends BEM
 {
