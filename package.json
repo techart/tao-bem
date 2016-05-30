@@ -5,7 +5,7 @@
   "author": "web@techart.ru",
   "license": "ISC",
   "scripts": {
-    "compile": "./node_modules/.bin/babel --presets es2015,stage-0 -d lib/ src/"
+    "postinstall": "../.bin/babel -d lib/ src/"
   },
   "dependencies": {
     "jquery": "^2.2.1",
