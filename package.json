@@ -4,7 +4,6 @@
   "description": "Frontend TAO/BEM",
   "author": "web@techart.ru",
   "license": "ISC",
-  "main": "lib/bem.js",
   "scripts": {
     "compile": "babel --presets es2015,stage-0 -d lib/ src/",
     "postinstall": "npm run compile"
