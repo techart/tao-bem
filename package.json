@@ -4,12 +4,17 @@
   "description": "Frontend TAO/BEM",
   "author": "web@techart.ru",
   "license": "ISC",
-  "main": "bem.js",
+  "main": "lib/bem.js",
+  "scripts": {
+    "compile": "babel --presets es2015,stage-0 -d lib/ src/",
+    "postinstall": "npm run compile"
+  },
   "dependencies": {
     "jquery": "^2.2.1",
     "events": "^1.1.0",
     "tao-core": "git+ssh://git@gitlab.s.intranet:frontend-tao/core.git"
   },
   "devDependencies": {
+    "babel-cli": "^6.0.0"
   }
 }
