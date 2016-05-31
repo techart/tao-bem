@@ -5,7 +5,8 @@
   "author": "web@techart.ru",
   "license": "ISC",
   "scripts": {
-    "postinstall": "../.bin/babel -d lib/ src/"
+    "compile": "babel -d lib/ src/",
+    "postinstall": "npm run compile"
   },
   "main": "lib/bem.js",
   "dependencies": {
