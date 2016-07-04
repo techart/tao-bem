@@ -159,7 +159,7 @@ class Block extends EventEmitter
 			self._live = live_cb;
 
 			if (live.length) {
-				$(self.$body).on(live.join(' '), self.blockClass, self._onEvent);
+				$(self.$body).on(live.join(' '), self.blockClass, self._onEvent.bind(self));
 			}
 		}
 
@@ -169,11 +169,11 @@ class Block extends EventEmitter
 
 			if (evt) {
 				type = evt.type;
-				instance._onEvent(evt);
+				instance.onLiveEvent(evt);
 
 				if (type == 'mouseover') {
 					evt.type = 'mouseenter';
-					instance._onEvent(evt);
+					instance.onLiveEvent(evt);
 				}
 
 				evt.type = type;
@@ -460,7 +460,7 @@ class Block extends EventEmitter
 	{
 		let s  = this.s('__'+ name);
 
-		return Registry.getInstance(this.$elem(name), s.substr(1), Block);
+		return Registry.getInstance(this.$elem(name)[0], s.substr(1), Block);
 	}
 
 	/**
@@ -555,7 +555,7 @@ class Block extends EventEmitter
 	onLiveEvent(evt)
 	{
 		if (evt === true) {
-			this._onEvent = this._onLiveEvent;
+			this.onLiveEvent = this._onLiveEvent;
 
 			evt = this._qevents.shift();
 			while(evt) {
@@ -608,6 +608,8 @@ class Block extends EventEmitter
 			// Set mod by event type
 			this.mod(mod[0], mod[1]);
 		}
+
+		return ret;
 	}
 
 	_onFocusOut()
