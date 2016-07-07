@@ -135,7 +135,7 @@ class Block extends EventEmitter
 		let live_cb = {};
 		let j;
 
-		if (!self.active) {
+		if (!self.active && this !== Block) {
 			self.active = true;
 
 			if (self.mods) {
