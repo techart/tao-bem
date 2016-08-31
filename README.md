@@ -243,7 +243,7 @@ class MyBlock extends ParentBlock
 ```
 
 ## Коллекции экземпляров блоков
-При инициализации экземпляры блока одного типа составляют коллекцию ```BEM.Collection```
+При инициализации экземпляры блока одного типа помещаются коллекции ```BEM.Collection```
 
 Получить коллекцию можно с помощью статического метода ```getCollection``` у блока.
 ``` js
@@ -252,9 +252,11 @@ import MyBlock from myblock;
 let items = MyBlock.getCollection()
 ```
 
-BEM.Collection реализует интерфейс [```Array```](https://developer.mozilla.org/ru/docs/Web/JavaScript/Reference/Global_Objects/Array).
+BEM.Collection реализует интерфейс ```Array```
+в связи с чем для работы доступны все методы ```Array.prototype.*``` [ссылка](https://developer.mozilla.org/ru/docs/Web/JavaScript/Reference/Global_Objects/Array),
 
-Так же для удобства использования у коллекции есть методы позволяющие производить операции над всеми экземплярами сразу:
+Так же для удобства использования у коллекции есть методы позволяющие производить операции над всеми своими элементами 
+сразу:
 * ***addMod(name[, state])***
 * ***delMod(name[, state])***
 * ***toggleMod(name, state)***
