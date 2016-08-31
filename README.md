@@ -255,8 +255,7 @@ let items = MyBlock.getCollection()
 BEM.Collection реализует интерфейс ```Array```
 в связи с чем для работы доступны все методы ```Array.prototype.*``` [ссылка](https://developer.mozilla.org/ru/docs/Web/JavaScript/Reference/Global_Objects/Array),
 
-Так же для удобства использования у коллекции есть методы позволяющие производить операции над всеми своими элементами 
-сразу:
+Так же для удобства использования есть методы позволяющие производить операции над всеми элементами сразу:
 * ***addMod(name[, state])***
 * ***delMod(name[, state])***
 * ***toggleMod(name, state)***
