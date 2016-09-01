@@ -12,6 +12,8 @@ class Collection extends ObjectsCollection
 	addMod(name, state)
 	{
 		this.invoke('addMod', name, state);
+
+		return this;
 	}
 
 	/**
@@ -23,6 +25,8 @@ class Collection extends ObjectsCollection
 	delMod(name, state)
 	{
 		this.invoke('delMod', name, state);
+
+		return this;
 	}
 
 	/**
@@ -34,6 +38,8 @@ class Collection extends ObjectsCollection
 	toggleMod(name, state)
 	{
 		this.invoke('toggleMod', name, state);
+
+		return this;
 	}
 
 	/**
