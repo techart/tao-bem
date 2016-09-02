@@ -308,3 +308,6 @@ class MyBlock extends BEM.Block
 	}
 }
 ```
+
+## Пример
+[ссылка](http://gitlab.s.intranet/frontend-tao/audio-player/tree/master/src)
