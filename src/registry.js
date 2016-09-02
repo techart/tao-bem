@@ -37,6 +37,10 @@ class Registry
 	 */
 	getModule(name)
 	{
+		if (typeof name == 'object') {
+			name = name.blockName;
+		}
+
 		if (this.issetModule(name)) {
 			return this._classes[name];
 		}
