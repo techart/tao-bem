@@ -556,7 +556,7 @@ class Element extends EventEmitter
 			evt = this._qevents.shift();
 			while(evt) {
 				this.onLiveEvent(evt);
-				this._qevents.shift();
+				evt = this._qevents.shift();
 			}
 		} else {
 			this._qevents.push(evt);
