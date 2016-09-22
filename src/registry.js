@@ -6,10 +6,9 @@ class Registry
 {
 	constructor()
 	{
-		this._classes   = {};
+		this._classes = {};
 		this._instances = {};
 		this._instance_collections = {};
-		this._queue = [];
 
 		this._init();
 	}
@@ -25,8 +24,15 @@ class Registry
 		this._classes[name] = contructor;
 		this._instance_collections[name] = contructor.makeCollection();
 
-		if (!contructor.forced) {
-			this._queue.push(name);
+		// ожидаем добавление новых блоков на страницу для их инициализации
+		$(document).on('click leftclick mouseover mousedown focusin change', contructor.blockClass, this._lazy_cb);
+
+		// если добавление модуля произошло после загрузки документа
+		// и модуль должен немедленно инициализировать все свои инстансы
+		if (document.readyState == 'complete'
+		    && contructor.forced
+		) {
+			this.initModuleFromDOM(name);
 		}
 	}
 
@@ -79,11 +85,6 @@ class Registry
 
 		while(i--) {
 			this.initModuleFromNode($items[i], name);
-		}
-
-		let index = this._queue.indexOf(name);
-		if (index > -1) {
-			this._queue.splice(index, 1);
 		}
 
 		return true;
@@ -218,7 +219,6 @@ class Registry
 
 		// ленивая инициализация
 		this._lazy_cb = this._lazyLoad.bind(this);
-		$(document).on('click leftclick mouseover mousedown focusin change', this._lazy_cb);
 	}
 
 	/**
@@ -244,27 +244,16 @@ class Registry
 	 */
 	_lazyLoad(evt)
 	{
-		let node = evt.target;
-		let names, i;
+		let node = evt.currentTarget;
+		let names = Utils.parseBlockNames(node.className);
+		let i;
 
-		while (document !== node) {
-			if(node == null) {
-				break;
+		for (i = names.length; i--;) {
+			if (node.hasAttribute(Config.idAttr(names[i]))) {
+				continue;
 			}
 
-			names = Utils.parseBlockNames(node.className);
-
-			if (names !== null) {
-				for (i = names.length; i--;) {
-					this.initModuleFromNode(node, names[i], evt);
-				}
-			}
-
-			node = node.parentNode;
-		}
-
-		if (!this._queue.length) {
-			$(document).off('click leftclick mouseover mousedown focusin change', this._lazy_cb);
+			this.initModuleFromNode(node, names[i], evt);
 		}
 	}
 }
