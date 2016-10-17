@@ -48,6 +48,11 @@ class Utils
 				+ mod
 				+ (state && typeof state === 'string' ? dividers.mods_val + state: '')
 	}
+
+	static regexpEscape(value)
+	{
+		return value.replace(/[-[\]{}()*+?.,\\^$|#\s]/g, "\\$&");
+	}
 }
 
 export default Utils;

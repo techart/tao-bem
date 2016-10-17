@@ -11,6 +11,23 @@ class Registry
 		this._instance_collections = {};
 
 		this._init();
+		this._initOnMutation();
+	}
+
+	_initOnMutation()
+	{
+		if (MutationObserver) {
+			var observer = new MutationObserver((mutations) => {
+				mutations.forEach((mutation) => {
+					if (mutation.target) {
+						this._forcedLoad($(mutation.target));
+					}
+				});
+			});
+			var config = { attributes: false, subtree: true, childList: true, characterData: false };
+			observer.observe(document, config);
+
+		}
 	}
 
 	/**
@@ -24,8 +41,10 @@ class Registry
 		this._classes[name] = contructor;
 		this._instance_collections[name] = contructor.makeCollection();
 
-		// ожидаем добавление новых блоков на страницу для их инициализации
+		// // ожидаем добавление новых блоков на страницу для их инициализации
+		// TODO: возможно это лишнее
 		$(document).on('click leftclick mouseover mousedown focusin change', contructor.blockClass, this._lazy_cb);
+
 
 		// если добавление модуля произошло после загрузки документа
 		// и модуль должен немедленно инициализировать все свои инстансы
@@ -192,6 +211,33 @@ class Registry
 		return instance;
 	}
 
+	invokeBlockInNode($node, method, args=[])
+	{
+		let elementProcessed = false;
+		this.getInstances($node).forEach((block) => {
+			if (block[method]) {
+				block[method](...args);
+				elementProcessed = true;
+			}
+		});
+		return elementProcessed;
+	}
+
+	getInstances($node)
+	{
+		let result = [];
+		if (!$node.attr('class')) {
+			return result;
+		}
+		$node.attr('class').split(' ').forEach((name) => {
+			let block = this.getInstance($node.get(0), name);
+			if (block) {
+				result.push(block);
+			}
+		});
+		return result;
+	}
+
 	/**
 	 * Возвращает коллекцию БЭМ объектов
 	 *
@@ -245,6 +291,9 @@ class Registry
 	_lazyLoad(evt)
 	{
 		let node = evt.currentTarget;
+		if (!node.className) {
+			return;
+		}
 		let names = Utils.parseBlockNames(node.className);
 		let i;
 

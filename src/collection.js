@@ -12,7 +12,6 @@ class Collection extends ObjectsCollection
 	addMod(name, state)
 	{
 		this.invoke('addMod', name, state);
-
 		return this;
 	}
 
@@ -25,7 +24,6 @@ class Collection extends ObjectsCollection
 	delMod(name, state)
 	{
 		this.invoke('delMod', name, state);
-
 		return this;
 	}
 
@@ -38,7 +36,6 @@ class Collection extends ObjectsCollection
 	toggleMod(name, state)
 	{
 		this.invoke('toggleMod', name, state);
-
 		return this;
 	}
 
@@ -57,7 +54,7 @@ class Collection extends ObjectsCollection
 	/**
 	 * Возвразает JQuery объект с нодами элементов коллекции
 	 */
-	$el()
+	get $el()
 	{
 		let ret = $([]);
 
@@ -67,6 +64,7 @@ class Collection extends ObjectsCollection
 
 		return ret;
 	}
+
 }
 
 export default Collection;

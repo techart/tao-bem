@@ -10,7 +10,7 @@
   },
   "main": "lib/bem.js",
   "dependencies": {
-    "jquery": "^2.2.1",
+    "jquery": "^3.1.0",
     "events": "^1.1.0",
     "tao-core": "git+ssh://git@gitlab.s.intranet:frontend-tao/core.git"
   },

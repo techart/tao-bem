@@ -50,7 +50,7 @@ class Element extends EventEmitter
 	/**
 	 * Список live-событий и их обработчиков
 	 */
-	static get live()
+	static get events()
 	{
 		return {}
 	}
@@ -58,7 +58,7 @@ class Element extends EventEmitter
 	/**
 	 * Список mods-событий и их обработчико
 	 */
-	static get events()
+	static get modsEvents()
 	{
 		return {
 			// События при изменении модификатора блока
@@ -67,7 +67,7 @@ class Element extends EventEmitter
 			},
 
 			// События при изменении модификатора эл-та
-			'onElemMod': {
+			onElemMod: {
 				'*': () => {}
 			}
 		}
@@ -86,7 +86,7 @@ class Element extends EventEmitter
 	 */
 	static get forced()
 	{
-		return false;
+		return true;
 	}
 
 	/**
@@ -143,8 +143,6 @@ class Element extends EventEmitter
 	{
 		let self = this;
 
-
-
 		let rspace = /\s+/g;
 		let live = [];
 		let live_cb = {};
@@ -160,7 +158,7 @@ class Element extends EventEmitter
 			}
 
 			// Соберем массив событий, которые нужно делегировать
-			$.each(self.live, (name, fn) => {
+			$.each(self.events, (name, fn) => {
 				name = $.trim(name).toLowerCase().split(rspace);
 				j = name.length;
 				while (j--) {
@@ -529,8 +527,27 @@ class Element extends EventEmitter
 
 	s(sel, className)
 	{
-		if( typeof sel == 'string' && (new RegExp(this.self.config().dividers.elem)).test(sel) ){
-			sel = sel.replace(new RegExp('\\b'+ this.self.config().dividers.elem, 'g'), (className ? '' : '.') + this.name + '__');
+		let result = '';
+		sel.split('+').forEach((si) =>  {
+			result += this.si(si, result ? result : className);
+		});
+		return result;
+	}
+
+	si(sel, className)
+	{
+		className = className ? className : '.' + this.name;
+
+		let elDivider = this.self.config().dividers.elem;
+		let elDividerEscaped = Utils.regexpEscape(elDivider);
+		let modDivider = this.self.config().dividers.mods;
+		let modDividerEscaped = Utils.regexpEscape(modDivider);
+
+		if( typeof sel == 'string' && (new RegExp(elDividerEscaped)).test(sel) ) {
+			sel = sel.replace(new RegExp('\\b'+ elDividerEscaped, 'g'), className + elDivider);
+		}
+		if( typeof sel == 'string' && (new RegExp(modDividerEscaped)).test(sel) ) {
+			sel = sel.replace(new RegExp(modDividerEscaped, 'g'), className + modDivider);
 		}
 
 		return	sel;
@@ -627,7 +644,7 @@ class Element extends EventEmitter
 	 */
 	_emitMod(mod, state, inner)
 	{
-		let onMod = this.self.events.onMod || {};
+		let onMod = this.self.modsEvents.onMod || {};
 
 		let ret   = inner || this._invoke(onMod['*'], mod, state);
 		let isStr = typeof state === 'string';
@@ -675,7 +692,7 @@ class Element extends EventEmitter
 
 	_emitElemMod(elem, mod, state)
 	{
-		let onElemMod = this.self.events.onElemMod || {};
+		let onElemMod = this.self.modsEvents.onElemMod || {};
 		let ret = this._invoke(onElemMod['*'], elem, mod, state);
 		let fn, fnType;
 
@@ -719,8 +736,9 @@ class Element extends EventEmitter
 	/**
 	 * Слушаем события на изменения модификатора у элементов
 	 *
-	 * @param  {Event} evt
+	 * @param elem
 	 * @param  {Object}  mod
+	 * @param state
 	 * @private
 	 */
 	onElemMod(elem, mod, state)
