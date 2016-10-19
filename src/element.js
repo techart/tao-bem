@@ -516,7 +516,7 @@ class Element extends EventEmitter
 				ret	= this._cache[sel];
 			} else {
 				ret	= ret.find(this.s(sel));
-				if( cache ){
+				if ( cache ) {
 					this._cache[sel] = ret;
 				}
 			}

@@ -11,7 +11,10 @@ class Registry
 		this._instance_collections = {};
 
 		this._init();
-		this._initOnMutation();
+
+		$(() => {
+			this._initOnMutation();
+		});
 	}
 
 	_initOnMutation()
