@@ -38,10 +38,19 @@ class Block extends Element
 			}
 			let [elementName, eventName] = name.split('.');
 			if (typeof cb == 'string') {
-				cb = this[cb].bind(this);
+				cb = this[cb];
 			}
-			this.elems(elementName).$el.on(eventName, cb);
+			let collection = this.elems(elementName);
+			let bindElementToCallback = (...args) => {
+				let element = Registry.getInstance(args[0].currentTarget, this._elementClass(elementName), Element);
+				cb.call(this, element, collection, ...args);
+			};
+			collection.$el.on(eventName, bindElementToCallback);
 		});
+	}
+
+	_elementClass(name) {
+		return this.s(this.elemsSelector(name)).substr(1);
 	}
 
 	/**
@@ -53,12 +62,11 @@ class Block extends Element
 	 */
 	elem(name, blockName = false, mod = false)
 	{
-		let s = this.s(this.elemsSelector(name));
 		let node = this.$elem(name, mod)[0];
 		if (!node) {
 			return null;
 		}
-		let ret = Registry.getInstance(node, s.substr(1), Element);
+		let ret = Registry.getInstance(node, this._elementClass(name), Element);
 		return blockName ? ret.asBlock(blockName) : ret;
 	}
 
