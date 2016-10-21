@@ -5,7 +5,7 @@
 Установка пакета, как и любого другого, производится через npm
 
 ``` bash
-npm install ssh+git://git@gitlab.s.intranet:frontend-tao/bem.git
+npm install git+http://git@gitlab.s.intranet:frontend-tao/bem.git
 ```
 
 ## Состав пакета
