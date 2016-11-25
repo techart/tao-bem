@@ -307,7 +307,7 @@ class Element extends EventEmitter
 		this.lazy  = parms.lazy  || this.self.lazy;
 		this.role  = parms.role  || node.attr('role');
 
-		this.$el = $(node).removeAttr('onclick');
+		this.$el = $(node);
 		this.el  = this.$el[0];
 		this.id  = ++$.guid;
 
