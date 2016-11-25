@@ -300,7 +300,7 @@ class Element extends EventEmitter
 		super();
 
 		node  = $(node);
-		parms = parms || ((node.attr('onclick') || $.noop)() || {});
+		parms = parms || {};
 
 		this.name  = name = name || this.self.blockName;
 		this.cache = parms.cache || this.self.cache;
