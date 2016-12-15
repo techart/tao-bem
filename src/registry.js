@@ -178,8 +178,9 @@ class Registry
 
 		let instance = this.getInstance(node, name);
 		let index =  this.getCollection(name)
-						? this.getCollection(name).findIndex((elem) => elem === instance) || false
+						? this.getCollection(name).findIndex((elem) => elem === instance)
 						: false;
+		index = (index === -1) ? false : index;
 
 		delete this._instances[instance.id];
 
