@@ -263,7 +263,7 @@ class Registry
 	_init()
 	{
 		// инициализация эл-ов при загрузке страницы
-		$(document).ready(setTimeout(() => {
+		$(document).ready(() => setTimeout(() => {
 			this._forcedLoad($(document));
 		}, 0));
 
