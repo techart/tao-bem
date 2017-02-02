@@ -5,7 +5,7 @@
 Установка пакета, как и любого другого, производится через npm
 
 ``` bash
-npm install git+http://git@gitlab.s.intranet:frontend-tao/bem.git
+npm install @webtechart/tao-bem
 ```
 
 ## Состав пакета
@@ -307,6 +307,3 @@ class MyBlock extends BEM.Block
 	}
 }
 ```
-
-## Пример
-[ссылка](http://gitlab.s.intranet/frontend-tao/audio-player/tree/master/src)
