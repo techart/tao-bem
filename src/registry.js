@@ -1,6 +1,7 @@
 import $ from "jquery";
 import Utils from "./utils";
 import Config from "./config";
+import BEM from "./bem";
 
 class Registry {
 	constructor() {
@@ -195,6 +196,11 @@ class Registry {
 			this._instance_collections[instance.name].push(instance);
 		}
 
+		if(instance.isBlock) {
+			BEM.Bus.emit('newInstance', instance.name, instance);
+			BEM.Bus.emit('newInstance:' + instance.name, instance);
+		}
+
 		return instance;
 	}
 
@@ -263,6 +269,19 @@ class Registry {
 			}
 		});
 		return result;
+	}
+
+	/**
+	 * Создает промис на ожидание инициализации элемента
+	 * @param {string} name
+	 * @returns {Promise}
+	 */
+	waitBlock(name) {
+		return new Promise((resolve, reject) => {
+			BEM.Bus.addListener('newInstance:' + name, (block) => {
+				resolve(block);
+			})
+		})
 	}
 
 	/**

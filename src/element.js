@@ -4,6 +4,7 @@ import Registry from "./registry";
 import Utils from "./utils";
 import Collection from "./collection";
 import EventEmitter from "events";
+import BEM from "bem";
 
 class Element extends EventEmitter {
 	/**
@@ -243,13 +244,20 @@ class Element extends EventEmitter {
 	}
 
 	/**
-	 *
 	 * @param {Event} evt
 	 * @returns {undefined}
 	 * @private
 	 */
 	static _onEvent(evt) {
 		return Registry.getInstance(evt.currentTarget, this.blockName).onLiveEvent(evt);
+	}
+
+	/**
+	 * Список зависимостей
+	 * @returns {String[]}
+	 */
+	static get relatedBlocks() {
+		return [];
 	}
 
 	/**
@@ -275,7 +283,6 @@ class Element extends EventEmitter {
 		return this._parent = Registry.getInstance(node, this.block, _class);
 	}
 
-	//noinspection JSAnnotator
 	/**
 	 * Устанавливает ссылку на родительский элемент
 	 * @param {Element} parent
@@ -330,6 +337,8 @@ class Element extends EventEmitter {
 		this.block = name;
 		this.element = '';
 
+		this.relatedBlocks = new Map();
+
 		if (this.isElement) {
 			let tmp = name.split(this.self.config().dividers.elem)
 
@@ -367,9 +376,32 @@ class Element extends EventEmitter {
 
 		this._silent = false;
 
+		for (let index in this.constructor.relatedBlocks) {
+			BEM.Bus.addListener(
+				'newInstance:' + this.constructor.relatedBlocks[index],
+				this._newRelatedBlocks.bind(this, this.constructor.relatedBlocks[index]),
+				true)
+			;
+		}
+
 		this.onInit();
 		this.onLiveEvent(true);
 		this.mod('js_init', true);
+	}
+
+	/**
+	 *
+	 * @param {string} name
+	 * @param {Element} instance
+	 * @private
+	 */
+	_newRelatedBlocks(name, instance) {
+		if(!this.relatedBlocks.has(name)) {
+			this.relatedBlocks.set(name, instance)
+			if(this.relatedBlocks.size === this.constructor.relatedBlocks.length) {
+				this.onRelatedBlocksInit();
+			}
+		}
 	}
 
 	/**
@@ -563,6 +595,13 @@ class Element extends EventEmitter {
 	 * Вызывается при инициализации экземпляра
 	 */
 	onInit() {
+
+	}
+
+	/**
+	 * Вызывается при инициализации экземпляра и всех его зависимостей
+	 */
+	onRelatedBlocksInit() {
 
 	}
 

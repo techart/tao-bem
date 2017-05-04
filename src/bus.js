@@ -4,11 +4,13 @@ class Bus extends EventEmitter{
 	constructor() {
 		super();
 		this._completedEvents = {};
+		this.setMaxListeners(200);
 	}
 
 	/**
 	 * Вызвать событие
 	 * @param {string} type
+	 * @param {Mixed} [...]
 	 * @returns {boolean}
 	 */
 	emit(type) {
