@@ -1,8 +1,9 @@
-class Config
-{
-	// разделители
-	static get dividers()
-	{
+class Config {
+	/**
+	 * разделители
+	 * @returns {{elem: string, mods: string, mods_val: string}}
+	 */
+	static get dividers() {
 		return {
 			// Разделитель блока и элемента
 			elem: '__',
@@ -15,9 +16,11 @@ class Config
 		}
 	}
 
-	// модификаторы
-	static get autoMods()
-	{
+	/**
+	 * модификаторы
+	 * @returns {{hover: string, press: string, focus: string}}
+	 */
+	static get autoMods() {
 		return {
 			hover: 'mouseenter mouseleave',
 			press: 'mouseup mousedown',
@@ -25,9 +28,11 @@ class Config
 		}
 	}
 
-	// Соответсвие события и модификатора, для авто установки
-	static get eventMod()
-	{
+	/**
+	 * Соответсвие события и модификатора, для авто установки
+	 * @returns {{focusin: [string,boolean], focusout: [string,boolean], mouseup: [string,boolean], mousedown: [string,boolean], mouseover: [string,boolean], mouseenter: [string,boolean], mouseleave: [string,boolean]}}
+	 */
+	static get eventMod() {
 		return {
 			focusin: ['focus', true],
 			focusout: ['focus', false],
@@ -41,10 +46,13 @@ class Config
 		}
 	}
 
-	// название аттрибута в котором будет храниться id блока
-	static idAttr(name)
-	{
-		return 'data-'+ name + '-bemId';
+	/**
+	 * название аттрибута в котором будет храниться id блока
+	 * @param {string} name
+	 * @returns {string}
+	 */
+	static idAttr(name) {
+		return 'data-' + name + '-bemId';
 	}
 }
 

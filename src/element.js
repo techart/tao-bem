@@ -5,61 +5,64 @@ import Utils from "./utils";
 import Collection from "./collection";
 import EventEmitter from "events";
 
-class Element extends EventEmitter
-{
+class Element extends EventEmitter {
 	/**
 	 * Имя блока
+	 * @throws Не указано имя блока
 	 */
-	static get blockName()
-	{
+	static get blockName() {
 		throw 'Unknown block name';
 	}
 
 	/**
 	 * CSS класс блока
+	 * @returns {string}
 	 */
-	static get blockClass()
-	{
-		return '.'+ this.blockName;
+	static get blockClass() {
+		return '.' + this.blockName;
 	}
 
-	static get $win()
-	{
+	/**
+	 * @returns {jQuery}
+	 */
+	static get $win() {
 		return $(window);
 	}
 
-	static get $doc()
-	{
+	/**
+	 * @returns {jQuery}
+	 */
+	static get $doc() {
 		return $(document);
 	}
 
-	static get $body()
-	{
+	/**
+	 * @returns {jQuery}
+	 */
+	static get $body() {
 		return this.$doc;
 	}
 
 	/**
-	 * Список модификаторов через пробел,
-	 * биндинг событий которых произойдет автоматически
+	 * Список модификаторов через пробел, биндинг событий которых произойдет автоматически
+	 * @returns {string}
 	 */
-	static get mods()
-	{
+	static get mods() {
 		return '';
 	}
 
 	/**
 	 * Список live-событий и их обработчиков
 	 */
-	static get events()
-	{
+	static get events() {
 		return {}
 	}
 
 	/**
-	 * Список mods-событий и их обработчико
+	 * Список mods-событий и их обработчики
+	 * @returns {{onMod: {*: (function())}, onElemMod: {*: (function())}}}
 	 */
-	static get modsEvents()
-	{
+	static get modsEvents() {
 		return {
 			// События при изменении модификатора блока
 			onMod: {
@@ -75,72 +78,76 @@ class Element extends EventEmitter
 
 	/**
 	 * Список аттриботов которые необходимо установить при инициализации
+	 * @returns {{}}
 	 */
-	static get attrs()
-	{
+	static get attrs() {
 		return {}
 	}
 
 	/**
 	 * Инициализация блока при загрузке страницы
+	 * @returns {boolean}
 	 */
-	static get forced()
-	{
+	static get forced() {
 		return true;
 	}
 
 	/**
 	 * Кешировать все выборки
+	 * @returns {boolean}
 	 */
-	static get cache()
-	{
+	static get cache() {
 		return false;
 	}
 
-	static get __abstrctBlockClass()
-	{
+	/**
+	 *
+	 * @returns {Element}
+	 * @private
+	 */
+	static get __abstrctBlockClass() {
 		return require('./block').default;
 	}
 
 	/**
 	 * Отложенная инициализация, если указано - время задержки в мс
+	 * @returns {boolean|number}
 	 */
-	static get lazy()
-	{
+	static get lazy() {
 		return false;
 	}
 
 	/**
 	 * Возвращает конфиг
+	 * @returns {Config}
 	 */
-	static config()
-	{
+	static config() {
 		return Config;
 	}
 
 	/**
 	 * Регистрирует объект в реестре
+	 * @returns {undefined}
 	 */
-	static register()
-	{
+	static register() {
 		return Registry.addModule(this.blockName, this);
 	}
 
-	static initialized()
-	{
+	/**
+	 * @returns {boolean}
+	 */
+	static initialized() {
 		return this.active || this === Element
 	}
 
 	/**
 	 * Инициализация экземпляра класса класса с подспиской на события
-	 *
-	 * @param node
-	 * @param evt
-	 * @param name
-	 * @returns {Block}
+	 * @param {HTMLElement} node
+	 * @param {Event} evt
+	 * @param {string} name
+	 * @returns {Element}
 	 */
-	static init(node, evt, name)
-	{
+	static init(node, evt, name) {
 		let self = this;
 
 		let rspace = /\s+/g;
@@ -163,7 +170,7 @@ class Element extends EventEmitter
 				j = name.length;
 				while (j--) {
 					live_cb[name[j]] = fn;
-					if ($.inArray(name[j], live) == -1) {
+					if ($.inArray(name[j], live) === -1) {
 						live.push(name[j]);
 					}
 				}
@@ -177,14 +184,14 @@ class Element extends EventEmitter
 		}
 
 		if (node && !Registry.issetInstance(node, name || self.blockName)) {
-			let instance = new self(node, window.undef, name);
+			let instance = new self(node, void 0, name);
 			let type;
 
 			if (evt) {
 				type = evt.type;
 				instance.onLiveEvent(evt);
 
-				if (type == 'mouseover') {
+				if (type === 'mouseover') {
 					evt.type = 'mouseenter';
 					instance.onLiveEvent(evt);
 				}
@@ -192,7 +199,7 @@ class Element extends EventEmitter
 				evt.type = type;
 			}
 
-			return	instance;
+			return instance;
 		} else if (!node) {
 			Registry.initModuleFromDOM(self.blockName, self.$body);
 		}
@@ -200,11 +207,10 @@ class Element extends EventEmitter
 
 	/**
 	 * Создает новый блок-элемент
-	 *
-	 * @param tagName
+	 * @param {string} tagName
+	 * @returns {Element}
 	 */
-	static create(tagName = 'div')
-	{
+	static create(tagName = 'div') {
 		let node = document.createElement(tagName);
 		node.className = this.blockName;
 
@@ -213,49 +219,52 @@ class Element extends EventEmitter
 
 	/**
 	 * Возвращает экземпляр класса для ноды
-	 *
-	 * @param node
-	 * @returns {*}
+	 * @param {HTMLElement} node
+	 * @returns {Element}
 	 */
-	static getInstance(node)
-	{
+	static getInstance(node) {
 		return Registry.getInstance(node, this.blockName);
 	}
 
 	/**
 	 * Создает коллекцию БЭМ блоков
+	 * @returns {Collection}
 	 */
-	static makeCollection()
-	{
+	static makeCollection() {
 		return Collection.make();
 	}
 
 	/**
 	 * Возвращает коллекцию объектов
+	 * @returns {boolean|Collection}
 	 */
-	static getCollection()
-	{
+	static getCollection() {
 		return Registry.getCollection(this.blockName);
 	}
 
-	static _onEvent(evt)
-	{
+	/**
+	 *
+	 * @param {Event} evt
+	 * @returns {undefined}
+	 * @private
+	 */
+	static _onEvent(evt) {
 		return Registry.getInstance(evt.currentTarget, this.blockName).onLiveEvent(evt);
 	}
 
 	/**
 	 * Аналог php static
+	 * @returns {constructor}
 	 */
-	get self()
-	{
+	get self() {
 		return this.constructor;
 	}
 
 	/**
 	 * Возвращает ссылку на родительский БЭМ объект
+	 * @returns {Element}
 	 */
-	get parent()
-	{
+	get parent() {
 		if (this._parent) {
 			return this._parent;
 		}
@@ -266,12 +275,12 @@ class Element extends EventEmitter
 		return this._parent = Registry.getInstance(node, this.block, _class);
 	}
 
+	//noinspection JSAnnotator
 	/**
 	 * Устанавливает ссылку на родительский элемент
-	 * @param parent
+	 * @param {Element} parent
 	 */
-	set parent(parent)
-	{
+	set parent(parent) {
 		if (!(parent instanceof this.self.__abstrctBlockClass)) {
 			throw new Exception('Parent must be instanceof BEM.Block');
 		}
@@ -279,49 +288,52 @@ class Element extends EventEmitter
 		this._parent = parent;
 	}
 
-	get isBlock()
-	{
+	/**
+	 * @returns {boolean}
+	 */
+	get isBlock() {
 		return this instanceof this.self.__abstrctBlockClass;
 	}
 
-	get isElement()
-	{
+	/**
+	 * @returns {boolean}
+	 */
+	get isElement() {
 		return !this.isBlock;
 	}
 
 	/**
 	 * Конструктор класса
-	 *
-	 * @param node
+	 * @param {HTMLElement} node
 	 * @param parms
+	 * @param {string}name
 	 */
-	constructor(node, parms, name)
-	{
+	constructor(node, parms, name) {
 		super();
 
-		node  = $(node);
+		node = $(node);
 		parms = parms || {};
 
-		this.name  = name = name || this.self.blockName;
+		this.name = name = name || this.self.blockName;
 		this.cache = parms.cache || this.self.cache;
-		this.lazy  = parms.lazy  || this.self.lazy;
-		this.role  = parms.role  || node.attr('role');
+		this.lazy = parms.lazy || this.self.lazy;
+		this.role = parms.role || node.attr('role');
 
 		this.$el = $(node);
-		this.el  = this.$el[0];
-		this.id  = ++$.guid;
+		this.el = this.$el[0];
+		this.id = ++$.guid;
 
-		this._mods    = {};
-		this._cache   = {};
+		this._mods = {};
+		this._cache = {};
 		this._qevents = [];
 
-		this.block   = name;
+		this.block = name;
 		this.element = '';
 
 		if (this.isElement) {
 			let tmp = name.split(this.self.config().dividers.elem)
 
-			this.block   = tmp[0];
+			this.block = tmp[0];
 			this.element = tmp[1];
 
 			this.on('bem:mod', (mod, state) => {
@@ -331,7 +343,7 @@ class Element extends EventEmitter
 
 		Registry.addInstance(this.el, this);
 
-		let  attrs = this.self.attrs;
+		let attrs = this.self.attrs;
 		attrs['role'] = this.role;
 		this.$el.attr(attrs);
 
@@ -342,8 +354,7 @@ class Element extends EventEmitter
 		}
 	}
 
-	ready()
-	{
+	ready() {
 		this.ready = () => this;
 
 		this._silent = true;
@@ -363,9 +374,9 @@ class Element extends EventEmitter
 
 	/**
 	 * Удаляет блок
+	 * @param {boolean} absolute
 	 */
-	destroy(absolute = true)
-	{
+	destroy(absolute = true) {
 		this.destroy = () => true;
 
 		// remove event listeners
@@ -380,29 +391,26 @@ class Element extends EventEmitter
 
 	/**
 	 * Проверить/Добавить/Удалить модификатор
-	 *
-	 * @public
-	 * @param	{String}	name
-	 * @param	{Boolean}	[state]
-	 * @return	{*}
+	 * @param {string} name
+	 * @param {boolean} [state]
+	 * @returns {*}
 	 */
-	mod(name, state)
-	{
+	mod(name, state) {
 		name = $.trim(name).split(/\s+/g);
 
 		let el = this.el;
 		let i = name.length;
 		let mod, currentMod, classMod, className;
 
-		if (state === window.undef) {
-			return	this._mods[name];
+		if (state === void 0) {
+			return this._mods[name];
 		}
 
-		while(i--) {
-			mod	= name[i];
+		while (i--) {
+			mod = name[i];
 			currentMod = this._mods[mod];
 
-			if (currentMod === window.undef) {
+			if (currentMod === void 0) {
 				currentMod = false;
 			}
 
@@ -410,10 +418,10 @@ class Element extends EventEmitter
 				this._mods[mod] = state;
 
 				if (this._emitMod(mod, state) !== false) {
-					classMod  = Utils.modClassName(this.name, mod, currentMod);
-					className = (' '+ el.className +' ').replace(' '+ classMod +' ', ' ');
+					classMod = Utils.modClassName(this.name, mod, currentMod);
+					className = (' ' + el.className + ' ').replace(' ' + classMod + ' ', ' ');
 
-					this._mods[mod]	= state;
+					this._mods[mod] = state;
 
 					if (state) {
 						className += Utils.modClassName(this.name, mod, state) + ' ';
@@ -422,73 +430,64 @@ class Element extends EventEmitter
 					el.className = $.trim(className);
 				} else {
 					// revert mod -- WTF????
-					this._mods[mod]	= currentMod;
+					this._mods[mod] = currentMod;
 				}
 			}
 		}
 
-		return	this;
+		return this;
 	}
 
 	/**
 	 * Проверить наличие модификатора
-	 *
-	 * @public
-	 * @param {String} name
-	 * @param {String} [state]
-	 * @return {Boolean}
+	 * @param {string} name
+	 * @param {string} [state]
+	 * @returns {boolean}
 	 */
-	hasMod(name, state)
-	{
-		var val = this._mods[name];
-		return	state === window.undef ? !!val : val == state;
+	hasMod(name, state) {
+		const val = this._mods[name];
+		return state === void 0 ? !!val : val == state;
 	}
 
 	/**
 	 * Добавить модификаторы
-	 *
-	 * @public
-	 * @param {String} name
-	 * @param {String} [state]
-	 * @return {Element}
+	 * @param {string} name
+	 * @param {string} [state]
+	 * @returns {Element}
 	 */
-	addMod(name, state)
-	{
-		return	this.mod(name, state ? state : true);
+	addMod(name, state) {
+		return this.mod(name, state ? state : true);
 	}
 
 	/**
 	 * Удалить модификаторы
-	 *
-	 * @public
-	 * @param {String} name
-	 * @param {String} [state]
-	 * @return {Element}
+	 * @param {string} name
+	 * @param {string} [state]
+	 * @returns {Element}
 	 */
-	delMod(name, state)
-	{
-		if (state === window.undef || this.hasMod(name, state)) {
+	delMod(name, state) {
+		if (state === void 0 || this.hasMod(name, state)) {
 			this.mod(name, false);
 		}
 
-		return	this;
+		return this;
 	}
 
 	/**
 	 * Дабавить или удлаить модификатор
-	 *
-	 * @public
-	 * @param {String} name
-	 * @param {Boolean} [state]
-	 * @return {Element}
+	 * @param {string} name
+	 * @param {string} [state]
+	 * @returns {Element}
 	 */
-	toggleMod(name, state)
-	{
-		return	this.mod(name, state === window.undef ? !this.hasMod(name) : state);
+	toggleMod(name, state) {
+		return this.mod(name, state === void 0 ? !this.hasMod(name) : state);
 	}
 
-	asBlock(blockName)
-	{
+	/**
+	 * @param {string} blockName
+	 * @returns {Element}
+	 */
+	asBlock(blockName) {
 		let _class = Registry.getModule(blockName);
 		let instance = Registry.getInstance(this.el, _class.blockName, this.self.__abstrctBlockClass);
 
@@ -501,41 +500,48 @@ class Element extends EventEmitter
 
 	/**
 	 * Аналог this.$el.find
-	 *
-	 * @param sel
-	 * @param force
-	 * @returns {*|jQuery}
+	 * @param {string} sel
+	 * @param {boolean} force
+	 * @returns {jQuery}
 	 */
-	$(sel, force)
-	{
+	$(sel, force) {
 		let ret = this.$el;
 		let cache = force ? false : this.cache;
 
-		if( sel !== window.undef ){
-			if ( cache && this._cache[sel] !== window.undef) {
-				ret	= this._cache[sel];
+		if (sel !== void 0) {
+			if (cache && this._cache[sel] !== void 0) {
+				ret = this._cache[sel];
 			} else {
-				ret	= ret.find(this.s(sel));
-				if ( cache ) {
+				ret = ret.find(this.s(sel));
+				if (cache) {
 					this._cache[sel] = ret;
 				}
 			}
 		}
 
-		return	ret;
+		return ret;
 	}
 
-	s(sel, className)
-	{
+	/**
+	 * @param {string} sel
+	 * @param {string} className
+	 * @returns {string}
+	 */
+	s(sel, className) {
 		let result = '';
-		sel.split('+').forEach((si) =>  {
+		sel.split('+').forEach((si) => {
 			result += this.si(si, result ? result : className);
 		});
 		return result;
 	}
 
-	si(sel, className)
-	{
+	/**
+	 *
+	 * @param {string} sel
+	 * @param {string} className
+	 * @returns {*}
+	 */
+	si(sel, className) {
 		className = className ? className : '.' + this.name;
 
 		let elDivider = this.self.config().dividers.elem;
@@ -543,35 +549,33 @@ class Element extends EventEmitter
 		let modDivider = this.self.config().dividers.mods;
 		let modDividerEscaped = Utils.regexpEscape(modDivider);
 
-		if( typeof sel == 'string' && (new RegExp(elDividerEscaped)).test(sel) ) {
-			sel = sel.replace(new RegExp('\\b'+ elDividerEscaped, 'g'), className + elDivider);
+		if (typeof sel === 'string' && (new RegExp(elDividerEscaped)).test(sel)) {
+			sel = sel.replace(new RegExp('\\b' + elDividerEscaped, 'g'), className + elDivider);
 		}
-		if( typeof sel == 'string' && (new RegExp(modDividerEscaped)).test(sel) ) {
+		if (typeof sel === 'string' && (new RegExp(modDividerEscaped)).test(sel)) {
 			sel = sel.replace(new RegExp(modDividerEscaped, 'g'), className + modDivider);
 		}
 
-		return	sel;
+		return sel;
 	}
 
 	/**
 	 * Вызывается при инициализации экземпляра
 	 */
-	onInit()
-	{
+	onInit() {
 
 	}
 
 	/**
 	 * Обработка событий
-	 * @param evt
+	 * @param {Event} evt
 	 */
-	onLiveEvent(evt)
-	{
+	onLiveEvent(evt) {
 		if (evt === true) {
 			this.onLiveEvent = this._onLiveEvent;
 
 			evt = this._qevents.shift();
-			while(evt) {
+			while (evt) {
 				this.onLiveEvent(evt);
 				evt = this._qevents.shift();
 			}
@@ -580,8 +584,12 @@ class Element extends EventEmitter
 		}
 	}
 
-	_onLiveEvent(evt)
-	{
+	/**
+	 * @param {Event} evt
+	 * @returns {undefined|*}
+	 * @private
+	 */
+	_onLiveEvent(evt) {
 		let self = this.self;
 
 		let type = evt.type;
@@ -593,20 +601,20 @@ class Element extends EventEmitter
 		if (type.indexOf('focus') === 0) {
 			clearTimeout(this._focusOutId);
 
-			if (type == 'focusin') {
+			if (type === 'focusin') {
 				if (this.focused) {
 					return;
 				}
 				this.focused = true;
-			} else if (this.focused){
+			} else if (this.focused) {
 				this._focusEvent = evt;
 				this._focusOutId = setTimeout(this._onFocusOut, 1);
 				return;
 			}
 		}
 
-		if (fn !== window.undef) {
-			if (typeof fn == 'string') {
+		if (fn !== void 0) {
+			if (typeof fn === 'string') {
 				fn = this[fn];
 			}
 
@@ -615,7 +623,7 @@ class Element extends EventEmitter
 
 		// авто установка модификатора по событию
 		if (ret !== false
-			&& mod !== window.undef
+			&& mod !== void 0
 			&& ~self.mods.indexOf(mod[0])
 		) {
 			// Set mod by event type
@@ -625,8 +633,10 @@ class Element extends EventEmitter
 		return ret;
 	}
 
-	_onFocusOut()
-	{
+	/**
+	 * @private
+	 */
+	_onFocusOut() {
 		if (!$(document.activeElement).closest(this.el, this.$el)[0]) {
 			this.focused = false;
 			this.onLiveEvent(this._focusEvent);
@@ -635,18 +645,16 @@ class Element extends EventEmitter
 
 	/**
 	 * Рассылка событий об изменения модификатора
-	 *
+	 * @param {string} mod
+	 * @param {boolean} state
+	 * @param {boolean} [inner]
+	 * @returns {boolean}
 	 * @private
-	 * @param	{String}	mod
-	 * @param	{Boolean}	state
-	 * @param	{Boolean}	[inner]
-	 * @return	{Boolean}
 	 */
-	_emitMod(mod, state, inner)
-	{
+	_emitMod(mod, state, inner) {
 		let onMod = this.self.modsEvents.onMod || {};
 
-		let ret   = inner || this._invoke(onMod['*'], mod, state);
+		let ret = inner || this._invoke(onMod['*'], mod, state);
 		let isStr = typeof state === 'string';
 		let fn, fnType, strState;
 
@@ -654,24 +662,24 @@ class Element extends EventEmitter
 			fn = onMod[mod];
 
 			if (fn === false) {
-				ret	= false;
+				ret = false;
 			} else if (fn) {
 				fnType = typeof fn;
 
 				if (fnType === 'string') {
 					ret = this._invoke(fn, state, mod);
 				} else if (fnType === 'object') {
-					if (fn['*'] !== window.undef) {
+					if (fn['*'] !== void 0) {
 						ret = this._invoke(fn['*'], state, mod);
 					}
 
 					if (ret !== false
-						&& fn[strState = (isStr ? state : (state ? 'yes' : 'no'))] !== window.undef
+						&& fn[strState = (isStr ? state : (state ? 'yes' : 'no'))] !== void 0
 					) {
 						ret = this._invoke(fn[strState], state, mod);
 					}
 				} else {
-					ret	= this._invoke(fn, state, mod);
+					ret = this._invoke(fn, state, mod);
 				}
 			}
 
@@ -687,11 +695,18 @@ class Element extends EventEmitter
 			this.emit('bem:mod', mod, state, this);
 		}
 
-		return	ret;
+		return ret;
 	}
 
-	_emitElemMod(elem, mod, state)
-	{
+	/**
+	 *
+	 * @param {Element} elem
+	 * @param {string} mod
+	 * @param {boolean} state
+	 * @returns {*}
+	 * @private
+	 */
+	_emitElemMod(elem, mod, state) {
 		let onElemMod = this.self.modsEvents.onElemMod || {};
 		let ret = this._invoke(onElemMod['*'], elem, mod, state);
 		let fn, fnType;
@@ -708,7 +723,7 @@ class Element extends EventEmitter
 				if (fnType === 'string') {
 					this._invoke(fn, elem, mod, state);
 				} else if (fnType === 'object') {
-					if (fn['*'] !== window.undef) {
+					if (fn['*'] !== void 0) {
 						// Установка любого модификатора
 						ret = this._invoke(fn['*'], mod, state, elem);
 					}
@@ -721,7 +736,7 @@ class Element extends EventEmitter
 						ret = false;
 					}
 				} else {
-					ret	= this._invoke(fn, state, mod, elem);
+					ret = this._invoke(fn, state, mod, elem);
 				}
 			}
 		}
@@ -735,25 +750,32 @@ class Element extends EventEmitter
 
 	/**
 	 * Слушаем события на изменения модификатора у элементов
-	 *
-	 * @param elem
-	 * @param  {Object}  mod
-	 * @param state
-	 * @private
+	 * @param {Element} elem
+	 * @param {string} mod
+	 * @param {boolean} state
 	 */
-	onElemMod(elem, mod, state)
-	{
+	onElemMod(elem, mod, state) {
 		this._emitElemMod(elem, mod, state);
 	}
 
-	_invoke(fn, ...args)
-	{
+
+	/**
+	 * @callback invokeCallback
+	 * @param {*}
+	 */
+	/**
+	 * @param {invokeCallback} fn
+	 * @param args
+	 * @returns {*}
+	 * @private
+	 */
+	_invoke(fn, ...args) {
 		if (fn === false) {
 			return false;
 		} else if (typeof fn === 'string') {
 			fn = this[fn];
-		} else if (fn === window.undef) {
-			return window.undef;
+		} else if (fn === void 0) {
+			return void 0;
 		}
 
 		return fn.apply(this, args);

@@ -4,33 +4,49 @@ import Block from "./block";
 import Element from "./element";
 import Collection from "./collection";
 
-// устраняем цикличную зависимость
-//Element.__abstractBlockClass = Block;
-
-class BEM
-{
-	static get Block()
-	{
+class BEM {
+	/**
+	 * @static
+	 * @returns {Block}
+	 * @constructor
+	 */
+	static get Block() {
 		return Block;
 	}
 
-	static get Element()
-	{
+	/**
+	 * @static
+	 * @returns {Element}
+	 * @constructor
+	 */
+	static get Element() {
 		return Element;
 	}
 
-	static get Collection()
-	{
+	/**
+	 * @static
+	 * @returns {Collection}
+	 * @constructor
+	 */
+	static get Collection() {
 		return Collection;
 	}
 
-	static get Registry()
-	{
+	/**
+	 * @static
+	 * @returns {Registry}
+	 * @constructor
+	 */
+	static get Registry() {
 		return Registry;
 	}
 
-	static get Config()
-	{
+	/**
+	 * @static
+	 * @returns {Config}
+	 * @constructor
+	 */
+	static get Config() {
 		return Config;
 	}
 }

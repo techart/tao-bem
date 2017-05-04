@@ -3,15 +3,20 @@ import Collection from "./collection";
 import Registry from "./registry";
 import $ from "jquery";
 
-class Block extends Element
-{
+class Block extends Element {
 
+	/**
+	 * @returns {{}}
+	 */
 	static get elementsEvents() {
 		return {}
 	}
 
-	static makeElementCollection(blockName = false)
-	{
+	/**
+	 * @param {string|boolean} [blockName = false]
+	 * @returns {Element}
+	 */
+	static makeElementCollection(blockName = false) {
 		if (blockName) {
 			return Registry.getModule(blockName).makeCollection();
 		}
@@ -19,13 +24,17 @@ class Block extends Element
 		return Collection.make();
 	}
 
-	static initialized()
-	{
+	/**
+	 * @returns {Element|boolean}
+	 */
+	static initialized() {
 		return Element.initialized.apply(this, arguments) || this === Block;
 	}
 
-	ready(...args)
-	{
+	/**
+	 * @param args
+	 */
+	ready(...args) {
 		super.ready(...args);
 		this.subscribeElementsToEvents();
 
@@ -33,11 +42,11 @@ class Block extends Element
 
 	subscribeElementsToEvents() {
 		$.each(this.self.elementsEvents, (name, cb) => {
-			if (name.indexOf('.') == -1) {
+			if (name.indexOf('.') === -1) {
 				throw "Event name must contain the name of the element";
 			}
 			let [elementName, eventName] = name.split('.');
-			if (typeof cb == 'string') {
+			if (typeof cb === 'string') {
 				cb = this[cb];
 			}
 			let collection = this.elems(elementName);
@@ -49,19 +58,23 @@ class Block extends Element
 		});
 	}
 
+	/**
+	 * @param {string} name
+	 * @returns {string}
+	 * @private
+	 */
 	_elementClass(name) {
 		return this.s(this.elemsSelector(name)).substr(1);
 	}
 
 	/**
 	 * Возвращает БЭМ элемент блока
-	 *
-	 * @param name имя элемента
-	 * @param blockName
-	 * @param mod
+	 * @param name
+	 * @param {string|boolean} [blockName = false]
+	 * @param {string|boolean} [mod = false]
+	 * @returns {*}
 	 */
-	elem(name, blockName = false, mod = false)
-	{
+	elem(name, blockName = false, mod = false) {
 		let node = this.$elem(name, mod)[0];
 		if (!node) {
 			return null;
@@ -72,15 +85,12 @@ class Block extends Element
 
 	/**
 	 * Возвращает массив БЭМ элементов блока
-	 *
-	 * @param name
-	 *
-	 * @param blockName
-	 * @param mod
-	 * @return Collection
+	 * @param {string}name
+	 * @param {string|boolean} [blockName = false]
+	 * @param {string|boolean} [mod = false]
+	 * @returns {Collection}
 	 */
-	elems(name, blockName = false, mod=false)
-	{
+	elems(name, blockName = false, mod = false) {
 		let s = this.s(this.elemsSelector(name));
 		let $items = this.$elems(name, mod);
 		let ret = this.self.makeElementCollection(blockName);
@@ -95,33 +105,31 @@ class Block extends Element
 
 	/**
 	 * Возвращает элемента блока
+	 * @param {string} name
+	 * @param {string|boolean} [mod = false]
 	 * @returns {jQuery}
 	 */
-	$elem(name, mod=false)
-	{
+	$elem(name, mod = false) {
 		return this.$elems(name, mod).first();
 	}
 
 	/**
 	 * Возвращает список эл-ов блока
-	 *
-	 * @param name
-	 * @param mod
+	 * @param {string} name
+	 * @param {string|boolean} [mod = false]
 	 * @returns {jQuery}
 	 */
-	$elems(name, mod=false)
-	{
+	$elems(name, mod = false) {
 		return this.$(this.elemsSelector(name, mod));
 	}
 
 	/**
 	 * Формирует селектор для поиска элемента
-	 * @param name
-	 * @param mod
-	 * @returns {*}
+	 * @param {string} name
+	 * @param {string|boolean} [mod = false]
+	 * @returns {string}
 	 */
-	elemsSelector(name, mod=false)
-	{
+	elemsSelector(name, mod = false) {
 		let elDivider = this.self.config().dividers.elem;
 		let sel = elDivider + name;
 		if (mod) {
