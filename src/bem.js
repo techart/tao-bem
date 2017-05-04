@@ -3,6 +3,7 @@ import Registry from "./registry";
 import Block from "./block";
 import Element from "./element";
 import Collection from "./collection";
+import Bus from "./bus";
 
 class BEM {
 	/**
@@ -48,6 +49,15 @@ class BEM {
 	 */
 	static get Config() {
 		return Config;
+	}
+
+	/**
+	 * @static
+	 * @returns {Bus}
+	 * @constructor
+	 */
+	static get Bus() {
+		return Bus;
 	}
 }
 
