@@ -278,9 +278,7 @@ class Registry {
 	 */
 	waitBlock(name) {
 		return new Promise((resolve, reject) => {
-			BEM.Bus.addListener('newInstance:' + name, (block) => {
-				resolve(block);
-			})
+			BEM.Bus.addListener('newInstance:' + name, block => resolve(block), true);
 		})
 	}
 
