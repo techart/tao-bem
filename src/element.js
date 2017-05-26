@@ -4,7 +4,7 @@ import Registry from "./registry";
 import Utils from "./utils";
 import Collection from "./collection";
 import EventEmitter from "events";
-import BEM from "bem";
+import BEM from "./bem";
 
 class Element extends EventEmitter {
 	/**
