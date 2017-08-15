@@ -1,3 +1,8 @@
 /lib/
 /node_modules/
 /flow-typed/
+.idea/*
+!/.idea/misc.xml
+!/.idea/vcs.xml
+!/.idea/webResources.xml
+!/.idea/tao-bem.iml
